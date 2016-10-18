@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+
+	<!-- Spring's component scan for identifying beans to be managed by the 
+		container. -->
+	<context:component-scan base-package="com.pluralsight.cxfdemo" />
+
+	<jaxws:endpoint id="helloWorld"
+		implementor="com.pluralsight.cxfdemo.HelloWorldImpl" address="/HelloWorld" />
+
+	<!-- The CXF JAX-WS endpoint. The address attribute defines the HTTP address 
+		of the endpoint. If this value is not set, the address will default to the 
+		address specified in the WSDL contract. In practice, this attribute is often 
+		defined using a configurable property as the address may change, such as 
+		when running in a development environment versus a production environment. 
+		The ID uniquely identifies the endpoint bean in the spring context. The implementor 
+		attribute specifies the implementation class for the service. While I have 
+		specified a fully qualified class name, you can also use an ID reference 
+		to a Spring bean. -->
+	<jaxws:endpoint id="orders"
+		implementor="com.pluralsight.cxfdemo.orders.DefaultOrdersEndpoint"
+		address="/services/orders">
+		<jaxws:inInterceptors>
+			<ref bean="orderServiceSoapHeaderInInterceptor" />
+		</jaxws:inInterceptors>
+	</jaxws:endpoint>
+
+	<!-- Custom interceptor for reading the inbound soap header on the server -->
+	<bean id="orderServiceSoapHeaderInInterceptor"
+		class="com.pluralsight.cxfdemo.orders.OrderServiceSoapHeaderInInterceptor" />
+</beans>

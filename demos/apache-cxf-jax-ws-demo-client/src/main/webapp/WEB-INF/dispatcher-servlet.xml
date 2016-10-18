@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<!-- Import CXF and initialize the Bus -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+
+	<context:component-scan base-package="com.pluralsight.cxfdemo"></context:component-scan>
+
+	<!-- Spring MVC view resolver -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- Bean definition for the order service SOAP header out custom interceptor -->
+	<bean id="orderServiceSoapHeaderOutInterceptor"
+		class="com.pluralsight.cxfdemo.orders.OrderServiceSoapHeaderOutInterceptor" />
+
+	<!-- CXF JAX-WS Client bean definition. Uses the local address to the orders 
+		web service running in Tomcat. Includes the custom SOAP header out interceptor. -->
+	<jaxws:client id="orders"
+		address="http://localhost:8080/apache-cxf-jax-ws-demo/services/orders"
+		serviceClass="com.pluralsight.service.orders.Orders">
+		<jaxws:outInterceptors>
+			<ref bean="orderServiceSoapHeaderOutInterceptor" />
+		</jaxws:outInterceptors>
+
+
+	</jaxws:client>
+
+
+</beans>

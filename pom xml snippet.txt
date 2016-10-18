@@ -1,0 +1,28 @@
+	<plugins>
+			<!-- Apache CXF Code Generation Plugin. This plug-in will generate code 
+				for the wsdl specified. We want to execute WSDL data binding as part of Maven's 
+				generate sources phase. After you add this, you will need to update the project 
+				Maven configuration, then run the generate-sources goal. -->
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>2.7.8</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<sourceRoot>src/main/java-generated</sourceRoot>
+							<wsdlOptions>
+								<wsdlOption>
+									<wsdl>${basedir}/src/main/resources/wsdl/Orders.wsdl</wsdl>
+								</wsdlOption>
+							</wsdlOptions>
+						</configuration>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
